@@ -18,10 +18,10 @@ func PersonalSign(raw []byte, priv *ecdsa.PrivateKey) (common.Signature, error) 
 	}
 
 	sig[crypto.RecoveryIDOffset] += 27 // Transform yellow paper V from 0/1 to 27/28
-	return BytesToSignature(sig), nil
+	return common.BytesToSignature(sig), nil
 }
 
-func EcRecover(data []byte, sig Signature) (ethcommon.Address, error) {
+func EcRecover(data []byte, sig common.Signature) (ethcommon.Address, error) {
 	if len(sig) != crypto.SignatureLength {
 		return ethcommon.Address{}, fmt.Errorf("signature must be %d bytes long", crypto.SignatureLength)
 	}
