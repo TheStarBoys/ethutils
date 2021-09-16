@@ -1,4 +1,4 @@
-module ethutils
+module github.com/TheStarBoys/ethutils
 
 go 1.16
 
