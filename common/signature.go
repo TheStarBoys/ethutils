@@ -10,14 +10,14 @@ type Signature [65]byte
 
 func HexToSignature(str string) Signature {
 	var sig Signature
-	bts := common.Hex2Bytes(str)
-	copy(sig[:], bts[0:65])
+	bts := common.FromHex(str)
+	copy(sig[:], bts)
 	return sig
 }
 
 func BytesToSignature(sig []byte) Signature {
 	var res Signature
-	copy(res[:], sig[:65])
+	copy(res[:], sig)
 	return res
 }
 
