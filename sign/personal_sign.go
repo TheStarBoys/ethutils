@@ -12,7 +12,11 @@ import (
 
 func PersonalSign(raw []byte, priv *ecdsa.PrivateKey) (common.Signature, error) {
 	hash := accounts.TextHash(raw)
-	sig, err := crypto.Sign(hash, priv)
+	return PersonalSignHash(ethcommon.BytesToHash(hash), priv)
+}
+
+func PersonalSignHash(hash ethcommon.Hash, priv *ecdsa.PrivateKey) (common.Signature, error) {
+	sig, err := crypto.Sign(hash.Bytes(), priv)
 	if err != nil {
 		return common.Signature{}, err
 	}
@@ -22,6 +26,11 @@ func PersonalSign(raw []byte, priv *ecdsa.PrivateKey) (common.Signature, error) 
 }
 
 func EcRecover(data []byte, sig common.Signature) (ethcommon.Address, error) {
+	hash := accounts.TextHash(data)
+	return EcRecoverHash(ethcommon.BytesToHash(hash), sig)
+}
+
+func EcRecoverHash(hash ethcommon.Hash, sig common.Signature) (ethcommon.Address, error) {
 	if len(sig) != crypto.SignatureLength {
 		return ethcommon.Address{}, fmt.Errorf("signature must be %d bytes long", crypto.SignatureLength)
 	}
@@ -31,8 +40,7 @@ func EcRecover(data []byte, sig common.Signature) (ethcommon.Address, error) {
 	}
 
 	sig[crypto.RecoveryIDOffset] -= 27 // Transform yellow paper V from 27/28 to 0/1
-
-	rpk, err := crypto.SigToPub(accounts.TextHash(data), sig.Bytes())
+	rpk, err := crypto.SigToPub(hash.Bytes(), sig.Bytes())
 	if err != nil {
 		return ethcommon.Address{}, err
 	}
